@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { api } from '../api';
 import { portraits } from '../avatars';
 import { AvatarPicker, readProfilePhoto } from '../components/AvatarPicker';
 import { AuthFrame } from '../components/AuthFrame';
@@ -13,8 +12,6 @@ export function Signup() {
   const [personalId, setPersonalId] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [code, setCode] = useState('');
-  const [codeSent, setCodeSent] = useState(false);
   const [password, setPassword] = useState('');
   const [gender, setGender] = useState('');
   const [avatar, setAvatar] = useState('');
@@ -39,33 +36,10 @@ export function Signup() {
     }
   }
 
-  async function sendCode() {
-    setError('');
-    setExists(false);
-    if (!email.trim() || !phone.trim()) {
-      setError('Enter your email and mobile number first.');
-      return;
-    }
-    setBusy(true);
-    try {
-      await api('/api/auth/signup-code', { method: 'POST', body: { email, phone } });
-      setCodeSent(true);
-    } catch (err) {
-      if (err.message === 'User already exist') setExists(true);
-      else setError(err.message);
-    } finally {
-      setBusy(false);
-    }
-  }
-
   async function onSubmit(event) {
     event.preventDefault();
     setError('');
     setExists(false);
-    if (!codeSent || code.length !== 6) {
-      setError('Verify your email with the 6-digit code first.');
-      return;
-    }
     if (!gender) {
       setError('Choose male, female, or other.');
       return;
@@ -76,7 +50,7 @@ export function Signup() {
     }
     setBusy(true);
     try {
-      await signup({ name, personalId, email, phone, code, password, gender, avatar });
+      await signup({ name, personalId, email, phone, password, gender, avatar });
     } catch (err) {
       if (err.message === 'User already exist') setExists(true);
       else setError(err.message);
@@ -135,11 +109,7 @@ export function Signup() {
             type="email"
             autoComplete="email"
             value={email}
-            onChange={(event) => {
-              setEmail(event.target.value);
-              setCodeSent(false);
-              setCode('');
-            }}
+            onChange={(event) => setEmail(event.target.value)}
             required
           />
         </label>
@@ -155,23 +125,6 @@ export function Signup() {
             required
           />
         </label>
-        <div className="verify-row">
-          <label>
-            Email code
-            <input
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              value={code}
-              onChange={(event) => setCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="6-digit code"
-              required
-            />
-          </label>
-          <button className="ghost" type="button" onClick={sendCode} disabled={busy}>
-            {codeSent ? 'Resend code' : 'Send code'}
-          </button>
-        </div>
-        {codeSent ? <p className="hint">Enter the code we sent to your email.</p> : null}
         <PasswordField
           label="Password"
           autoComplete="new-password"
