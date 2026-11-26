@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { kindLabel, mediaLabel } from '../media';
 import { Avatar } from '../components/Avatar';
 import { Icon } from '../components/Icon';
+import { useNotices } from '../components/Notices';
 
 const kinds = [
   { id: 'friends', title: 'Friends', copy: 'Group', icon: 'friends' },
@@ -15,6 +16,7 @@ const kinds = [
 
 export function Lobby() {
   const { token } = useAuth();
+  const { notify, revision } = useNotices();
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [friends, setFriends] = useState([]);
@@ -37,9 +39,9 @@ export function Lobby() {
 
   useEffect(() => {
     load();
-    // load on entry
+    // reload when a notice arrives, such as a room invite
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [token, revision]);
 
   function toggleFriend(id) {
     setPicked((current) => (current.includes(id) ? current.filter((item) => item !== id) : [...current, id]));
@@ -55,6 +57,7 @@ export function Lobby() {
         token,
         body: { name, kind, friendIds: picked }
       });
+      notify(`Room ${data.room.name} is ready.`);
       navigate(`/room/${data.room.id}`);
     } catch (err) {
       setError(err.message);

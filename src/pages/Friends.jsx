@@ -76,7 +76,7 @@ export function Friends() {
         </div>
       </header>
 
-      <div className="lobby-grid">
+      <div className="lobby-grid friends-layout">
         <section className="panel stack">
           <h2>Find someone</h2>
           <form className="join-code" onSubmit={search}>

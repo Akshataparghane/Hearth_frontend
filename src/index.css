@@ -754,6 +754,7 @@ html.capture-blank canvas { opacity: 0 !important; }
   .auth-story h2 { font-size: 2.3rem; margin-bottom: 12px; }
   .page { padding: 18px 14px 36px; }
   .history-grid { grid-template-columns: 1fr; }
+  .friends-layout { grid-template-columns: 1fr; }
   .page-head, .callbar, .link-form { flex-direction: column; align-items: stretch; }
   .room-bar { flex-direction: row; align-items: center; flex-wrap: wrap; }
   .room-actions { flex-direction: row; }
@@ -787,4 +788,36 @@ html.capture-blank canvas { opacity: 0 !important; }
   .inbox:not(.open) .thread { display: none; }
   .back-link { display: inline-flex; }
   .thread-bar { padding-top: 10px; }
+}
+
+@media (max-width: 640px) {
+  .auth-story > div { display: none; }
+  .auth-story {
+    height: auto;
+    min-height: 0;
+    justify-content: flex-start;
+    padding: max(16px, env(safe-area-inset-top)) 16px 0;
+  }
+  .auth-panel { padding-top: 8px; }
+  .verify-row { flex-direction: column; align-items: stretch; }
+  .verify-row .ghost { width: 100%; }
+  .topbar { gap: 6px; }
+  .topbar nav { gap: 2px; }
+  .topbar nav a { font-size: 0; gap: 0; padding: 10px; }
+  .topbar nav a .badge { font-size: 0.75rem; margin-left: 2px; }
+  .nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .who .ghost { font-size: 0; padding: 10px; }
+  .main-slot:has(.lobby) { overflow: auto; }
+  .page.lobby { height: auto; overflow: visible; }
+  .page.lobby .lobby-grid {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+  .page.lobby .panel,
+  .page.lobby .room-board { overflow: visible; }
+  .room-preview { grid-template-columns: 1fr; }
+  .friends-layout { grid-template-columns: 1fr; }
+  .call-grid { grid-template-columns: 1fr; }
+  .history-grid { grid-template-columns: 1fr; }
 }

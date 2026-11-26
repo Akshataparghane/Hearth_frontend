@@ -30,6 +30,13 @@ export function NoticeProvider({ token, userId, children }) {
     window.setTimeout(() => {
       setToasts((current) => current.filter((item) => item.id !== id));
     }, 4500);
+    if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+      try {
+        new Notification('Hearth', { body: text });
+      } catch {
+        // the phone can refuse a banner; the on-screen note still shows
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -39,7 +46,12 @@ export function NoticeProvider({ token, userId, children }) {
   }, [token, revision]);
 
   useEffect(() => {
-    const unlock = () => unlockSounds();
+    const unlock = () => {
+      unlockSounds();
+      if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+        Notification.requestPermission().catch(() => {});
+      }
+    };
     window.addEventListener('pointerdown', unlock);
     return () => window.removeEventListener('pointerdown', unlock);
   }, []);
@@ -54,7 +66,10 @@ export function NoticeProvider({ token, userId, children }) {
   useEffect(() => {
     const socket = createSocket(token);
     socket.on('notice', (notice) => {
-      if (notice?.text) notify(notice.text);
+      if (notice?.text) {
+        playNotify();
+        notify(notice.text);
+      }
       setRevision((value) => value + 1);
     });
     socket.on('direct', (message) => {
@@ -97,7 +112,9 @@ export function NoticeProvider({ token, userId, children }) {
       });
     });
     socket.on('call-ring', (call) => {
-      if (String(call.to) === String(userId)) setIncoming(call);
+      if (String(call.to) !== String(userId)) return;
+      setIncoming(call);
+      notify(`${call.from?.name || 'A friend'} is calling.`);
     });
     socket.on('call-update', (call) => {
       if (call.status === 'answered' && call.roomId && joinedCall.current !== call.id) {

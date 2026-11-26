@@ -10,9 +10,9 @@ import { NoticeProvider, useNotices } from './Notices';
 function FriendLink() {
   const { pending } = useNotices();
   return (
-    <NavLink to="/friends">
+    <NavLink to="/friends" aria-label="Friends">
       <Icon name="friends" />
-      Friends
+      <span className="nav-label">Friends</span>
       {pending > 0 ? <span className="badge">{pending}</span> : null}
     </NavLink>
   );
@@ -21,9 +21,9 @@ function FriendLink() {
 function ChatLink() {
   const { unreadChats } = useNotices();
   return (
-    <NavLink to="/chats">
+    <NavLink to="/chats" aria-label="Chats">
       <Icon name="chat" />
-      Chats
+      <span className="nav-label">Chats</span>
       {unreadChats > 0 ? <span className="badge">{unreadChats}</span> : null}
     </NavLink>
   );
@@ -63,9 +63,9 @@ export function Layout() {
       <header className="topbar">
         <Brand />
         <nav>
-          <NavLink to="/" end>
+          <NavLink to="/" end aria-label="Rooms">
             <Icon name="rooms" />
-            Rooms
+            <span className="nav-label">Rooms</span>
           </NavLink>
           <ChatLink />
           <FriendLink />
@@ -74,9 +74,9 @@ export function Layout() {
           <NavLink to="/profile" className="avatar-link" aria-label="Open profile">
             <Avatar name={user.name} color={user.color} avatar={user.avatar} />
           </NavLink>
-          <button className="ghost tiny" type="button" onClick={logout}>
+          <button className="ghost tiny" type="button" onClick={logout} aria-label="Log out">
             <Icon name="logout" />
-            Log out
+            <span className="nav-label">Log out</span>
           </button>
         </div>
       </header>
